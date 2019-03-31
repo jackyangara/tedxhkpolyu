@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tedxhkpolyu/home.dart';
 import 'package:tedxhkpolyu/myted.dart';
-import 'package:tedxhkpolyu/profilebar.dart';
 import 'package:tedxhkpolyu/search.dart';
-import 'package:tedxhkpolyu/searchbar.dart';
+import 'package:tedxhkpolyu/ui/home/home.dart';
 
 void main() => runApp(MyApp());
 
@@ -39,39 +37,11 @@ class RootPageState extends State<RootPage> {
           child: Scaffold(
         appBar: AppBar(
           title: Image.asset("img/logo.png",height: 25.0,),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.more_vert
-              ),
-              onPressed: null,
-            )
-          ],
+          actions: _actions(),
           bottom: _selectBottom(_currentIndex)
         ),
         body: _selectWidget(_currentIndex),
-        bottomNavigationBar: Theme(
-             
-          data: Theme.of(context).copyWith(
-          // sets the background color of the `BottomNavigationBar`
-          canvasColor: Colors.white,
-          // sets the active color of the `BottomNavigationBar` if `Brightness` is light
-          primaryColor: Colors.black,
-          textTheme: Theme
-              .of(context)
-              .textTheme
-              .copyWith(caption: new TextStyle(color: Colors.grey))),
-            child: BottomNavigationBar(
-            
-            items: [
-              BottomNavigationBarItem(icon: Icon(Icons.home),title:Text("Home"), ),
-              BottomNavigationBarItem(icon: Icon(Icons.search),title:Text("Discover"),),
-              BottomNavigationBarItem(icon: Icon(Icons.person),title:Text("My TED"),),
-            ],
-            currentIndex: _currentIndex,
-            onTap: onTapped,
-          ),
-        ),
+        bottomNavigationBar: _bottomNavBar()
       ),
     );
   }
@@ -98,6 +68,13 @@ class RootPageState extends State<RootPage> {
     switch (index) {
       case 0:
         return TabBar(
+          indicatorColor: Colors.redAccent,
+          unselectedLabelColor: Colors.grey,
+          labelStyle: TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.w600
+          ),
+          labelColor: Colors.red,
           tabs: <Widget>[
             Tab(text: "Trending",),
             Tab(text: "Newest",),
@@ -145,6 +122,42 @@ class RootPageState extends State<RootPage> {
         ),
       ),
     );
+  }
+
+  _bottomNavBar() {
+    return Theme(
+
+      data: Theme.of(context).copyWith(
+        // sets the background color of the `BottomNavigationBar`
+          canvasColor: Colors.white,
+          // sets the active color of the `BottomNavigationBar` if `Brightness` is light
+          primaryColor: Colors.black,
+          textTheme: Theme
+              .of(context)
+              .textTheme
+              .copyWith(caption: new TextStyle(color: Colors.grey))),
+      child: BottomNavigationBar(
+
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home),title:Text("Home"), ),
+          BottomNavigationBarItem(icon: Icon(Icons.search),title:Text("Discover"),),
+          BottomNavigationBarItem(icon: Icon(Icons.person),title:Text("My TED"),),
+        ],
+        currentIndex: _currentIndex,
+        onTap: onTapped,
+      ),
+    );
+  }
+
+  List<Widget> _actions() {
+    return <Widget>[
+      IconButton(
+        icon: Icon(
+            Icons.more_vert
+        ),
+        onPressed: null,
+      )
+    ];
   }
 }
 
