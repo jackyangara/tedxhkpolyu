@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:tedxhkpolyu/newesttab.dart';
-import 'package:tedxhkpolyu/trendingtab.dart';
+
 
 class MyTedPage extends StatefulWidget {
   @override
@@ -23,7 +22,7 @@ class MyTedPageState extends State<MyTedPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     return Container(
       alignment: Alignment.center,
           child: _boolLoading?CircularProgressIndicator():ListView(

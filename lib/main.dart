@@ -61,6 +61,7 @@ class RootPageState extends State<RootPage> {
       case 2:
         return MyTedPage();
       default:
+        return HomePage();
     }
   }
 
@@ -85,6 +86,7 @@ class RootPageState extends State<RootPage> {
       case 2:
         return null;
       default:
+        return null;
     }
   }
 
