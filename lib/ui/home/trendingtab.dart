@@ -1,12 +1,35 @@
 import 'dart:async';
-
+import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:tedxhkpolyu/model/video_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class TrendingTab extends StatelessWidget {
-
+class TrendingTab extends StatefulWidget {
   static const double padding = 8.0;
+  @override
+  TrendingTabState createState() {
+    return new TrendingTabState();
+  }
+}
+
+class TrendingTabState extends State<TrendingTab> {
+  VideoPlayerController _controller;
+  
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.network(
+        'http://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_20mb.mp4')
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+      });
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +52,7 @@ class TrendingTab extends StatelessWidget {
           ///Build video tiles
           return ListView.builder(
             itemCount: snapshot.data.length,
-            padding: const EdgeInsets.all(padding),
+            padding: const EdgeInsets.all(TrendingTab.padding),
             itemBuilder: (_, index) {
               var videoModel = videos[index];
               return _videoTile(videoModel);
@@ -48,20 +71,25 @@ class TrendingTab extends StatelessWidget {
       ///Think of this padding as spacing between items
       padding: const EdgeInsets.all(4.0),
       child: GestureDetector(
-        onTap: () => _openVideoUrl(videoModel.videoUrl),
-
+        onTap: () {
+          setState((){
+            _controller.value.isPlaying
+            ? _controller.pause()
+            : _controller.play();
+          });
+        },
         ///Text widgets on top of Image
         child: Stack(
           ///Position ListTile to bottom of Stack
           alignment: AlignmentDirectional.bottomCenter,
           children: <Widget>[
 
-            Image.network(videoModel.videoThumbUrl,
-              width: double.infinity,
-              height: 200.0,
-              fit: BoxFit.fitWidth,
-            ),
-
+            _controller.value.initialized
+              ? AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                )
+              : Placeholder(),
             ///ListTile containing Text Widgets
             ListTile(
               contentPadding: EdgeInsets.only(bottom: 5.0, left: 8.0),
@@ -76,15 +104,11 @@ class TrendingTab extends StatelessWidget {
                 ],
               ),
             )
-
-
-
           ],
         ),
       ),
     );
   }
-
 
   ///Package url_launcher
   ///https://github.com/flutter/plugins/tree/master/packages/url_launcher
@@ -155,6 +179,4 @@ class TrendingTab extends StatelessWidget {
       VideoModel("A flying saucer spotted flying over skies of Jakarta last night at 9.00PM; netizens say that a catastrophe is coming", "Jakakoko", url, imageUrl, 502),
     ];
   }
-
-//  static const TextStyle _whiteText = TextStyle(color: Colors.white, );
 }
