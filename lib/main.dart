@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tedxhkpolyu/myted.dart';
 import 'package:tedxhkpolyu/search.dart';
 import 'package:tedxhkpolyu/ui/home/home.dart';
+import 'package:tedxhkpolyu/blog.dart';
 
 void main() => runApp(MyApp());
 
@@ -57,8 +58,10 @@ class RootPageState extends State<RootPage> {
       case 0:
         return HomePage();
       case 1:
-        return SearchPage();
+        return BlogPage();
       case 2:
+        return SearchPage();
+      case 3:
         return MyTedPage();
       default:
         return HomePage();
@@ -82,6 +85,8 @@ class RootPageState extends State<RootPage> {
           ],
         );
       case 1:
+        return null;
+      case 2:
         return _searchBar();
       case 2:
         return null;
@@ -139,9 +144,10 @@ class RootPageState extends State<RootPage> {
               .textTheme
               .copyWith(caption: new TextStyle(color: Colors.grey))),
       child: BottomNavigationBar(
-
+        type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home),title:Text("Home"), ),
+          BottomNavigationBarItem(icon: Icon(Icons.book),title:Text("Blog"), ),
           BottomNavigationBarItem(icon: Icon(Icons.search),title:Text("Discover"),),
           BottomNavigationBarItem(icon: Icon(Icons.person),title:Text("My TED"),),
         ],

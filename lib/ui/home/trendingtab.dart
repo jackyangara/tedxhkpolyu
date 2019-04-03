@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:tedxhkpolyu/videotab.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:tedxhkpolyu/model/video_model.dart';
@@ -72,11 +73,15 @@ class TrendingTabState extends State<TrendingTab> {
       padding: const EdgeInsets.all(4.0),
       child: GestureDetector(
         onTap: () {
-          setState((){
-            _controller.value.isPlaying
-            ? _controller.pause()
-            : _controller.play();
-          });
+          Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => VideoPage()),
+                  );
+          // setState((){
+          //   _controller.value.isPlaying
+          //   ? _controller.pause()
+          //   : _controller.play();
+          // });
         },
         ///Text widgets on top of Image
         child: Stack(
@@ -89,7 +94,7 @@ class TrendingTabState extends State<TrendingTab> {
                   aspectRatio: _controller.value.aspectRatio,
                   child: VideoPlayer(_controller),
                 )
-              : Placeholder(),
+              : CircularProgressIndicator(),
             ///ListTile containing Text Widgets
             ListTile(
               contentPadding: EdgeInsets.only(bottom: 5.0, left: 8.0),

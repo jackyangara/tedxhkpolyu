@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class NewestTab extends StatelessWidget {
 
-  static const double padding = 8.0;
+  static const double padding = 5.0;
 
   @override
   Widget build(BuildContext context) {
