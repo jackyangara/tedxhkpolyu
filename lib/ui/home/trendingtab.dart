@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:tedxhkpolyu/videotab.dart';
+import 'package:tedxhkpolyu/video.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:tedxhkpolyu/model/video_model.dart';
@@ -20,7 +20,7 @@ class TrendingTabState extends State<TrendingTab> {
   void initState() {
     super.initState();
     _controller = VideoPlayerController.network(
-        'http://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_20mb.mp4')
+        'http://techslides.com/demos/sample-videos/small.mp4')
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
@@ -88,13 +88,12 @@ class TrendingTabState extends State<TrendingTab> {
           ///Position ListTile to bottom of Stack
           alignment: AlignmentDirectional.bottomCenter,
           children: <Widget>[
-
             _controller.value.initialized
               ? AspectRatio(
                   aspectRatio: _controller.value.aspectRatio,
                   child: VideoPlayer(_controller),
                 )
-              : CircularProgressIndicator(),
+              : Placeholder(),
             ///ListTile containing Text Widgets
             ListTile(
               contentPadding: EdgeInsets.only(bottom: 5.0, left: 8.0),
@@ -178,10 +177,6 @@ class TrendingTabState extends State<TrendingTab> {
     final imageUrl = 'https://yt3.ggpht.com/a-/AAuE7mAu_-wIFvVO-HT01aQiwmI4GHd_aEXw3HQ-OA=s900-mo-c-c0xffffffff-rj-k-no';
     return <VideoModel>[
       VideoModel("Several studies have concluded that Hong Kong is located in Asia", "Jacky Angara", url, imageUrl, 200),
-      VideoModel("Is global warming a hoax made by environmentalists to get funding going their way?", "Jacky Chan", url, imageUrl, 700),
-      VideoModel("Indonesia changed their currency to Indonesian Rupeeah", "Jacky Mao", url, imageUrl, 123),
-      VideoModel("Flat earthers banned the phrase 'around the world'", "Chen Long", url, imageUrl, 322),
-      VideoModel("A flying saucer spotted flying over skies of Jakarta last night at 9.00PM; netizens say that a catastrophe is coming", "Jakakoko", url, imageUrl, 502),
     ];
   }
 }
