@@ -75,8 +75,17 @@ class BlogDetailPage extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        
-      )
+        child: RichText(
+          text: TextSpan(
+            text: 'Hello ',
+            style: DefaultTextStyle.of(context).style,
+            children: <TextSpan>[
+              TextSpan(text: 'bold', style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(text: ' world!'),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
