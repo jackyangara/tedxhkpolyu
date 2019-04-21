@@ -171,6 +171,7 @@ class TrendingTabState extends State<TrendingTab> {
 
   ///Mock load data from Backend
   Future<List<VideoModel>> _loadVideos() async {
+    //TODO: fetch data firebase
     await Future.delayed(Duration(milliseconds: 1000));
 
     final url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";

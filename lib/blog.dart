@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 
 class BlogPage extends StatelessWidget {
+  //TODO: index- title subtitle 
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -68,6 +69,7 @@ class BlogPage extends StatelessWidget {
 }
 
 class BlogDetailPage extends StatelessWidget {
+  //TODO: index- title subtitle content
   @override
   Widget build(BuildContext context) {
     return Scaffold(
