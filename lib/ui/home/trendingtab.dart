@@ -4,6 +4,7 @@ import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:tedxhkpolyu/model/video_model.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TrendingTab extends StatefulWidget {
   static const double padding = 8.0;

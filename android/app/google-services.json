@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "775519862924",
+    "firebase_url": "https://tedxpolyu-fb021.firebaseio.com",
+    "project_id": "tedxpolyu-fb021",
+    "storage_bucket": "tedxpolyu-fb021.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:775519862924:android:a8178cc9a2449cac",
+        "android_client_info": {
+          "package_name": "com.tedxpolyu.mobileapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "775519862924-lcse6ce9ippp3b82qk32vl1ri8a5bfib.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxB_LUqMpPMHXUhPK5wT2b7d_qQzT_uwE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "775519862924-lcse6ce9ippp3b82qk32vl1ri8a5bfib.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
