@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tedxhkpolyu/model/video_model.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 class NewestTab extends StatelessWidget {
 
   static const double padding = 5.0;
@@ -140,20 +140,31 @@ class NewestTab extends StatelessWidget {
               color: Colors.white,
               fontWeight: FontWeight.w300)
       );
-
+  //TODO: put in last 6 hours ago uploaded
   ///Mock load data from Backend
   Future<List<VideoModel>> _loadVideos() async {
     await Future.delayed(Duration(milliseconds: 1000));
 
     final url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
     final imageUrl = 'https://yt3.ggpht.com/a-/AAuE7mAu_-wIFvVO-HT01aQiwmI4GHd_aEXw3HQ-OA=s900-mo-c-c0xffffffff-rj-k-no';
-    return <VideoModel>[
-      VideoModel("Several studies have concluded that Hong Kong is located in Asia", "Jacky Angara", url, imageUrl, 200),
-      VideoModel("Is global warming a hoax made by environmentalists to get funding going their way?", "Jacky Chan", url, imageUrl, 700),
-      VideoModel("Indonesia changed their currency to Indonesian Rupeeah", "Jacky Mao", url, imageUrl, 123),
-      VideoModel("Flat earthers banned the phrase 'around the world'", "Chen Long", url, imageUrl, 322),
-      VideoModel("A flying saucer spotted flying over skies of Jakarta last night at 9.00PM; netizens say that a catastrophe is coming", "Jakakoko", url, imageUrl, 502),
-    ];
+    List<VideoModel> res = [];
+    VideoModel temp;
+    String _title, _author, _videoUrl, _videoThumbUrl;
+    DocumentReference speakerRef;
+    int _duration;
+        Firestore.instance.collection('videos').snapshots().listen((data) =>{
+          data.documents.forEach((doc) => {
+            _title = doc["title"],
+            speakerRef = doc["speaker_id"],
+            _author = speakerRef.documentID.toString(),
+            _videoUrl = doc["video_url"],
+            _videoThumbUrl = imageUrl,
+            _duration = doc["duration"],
+            temp = new VideoModel(_title, _author, _videoUrl, _videoThumbUrl, _duration),
+            res.add(temp),
+      })
+    });
+    return res;
   }
 
 //  static const TextStyle _whiteText = TextStyle(color: Colors.white, );

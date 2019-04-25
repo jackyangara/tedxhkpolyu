@@ -189,7 +189,7 @@ class TrendingTabState extends State<TrendingTab> {
             _author = speakerRef.documentID.toString(),
             _videoUrl = doc["video_url"],
             _videoThumbUrl = imageUrl,
-            _duration = 200,
+            _duration = doc["duration"],
             temp = new VideoModel(_title, _author, _videoUrl, _videoThumbUrl, _duration),
             res.add(temp),
       })
