@@ -1,7 +1,7 @@
 
 
 class VideoDB{
-
+  final String _title;
   final String _video_id;
   final String _speaker_id;
   final String _category_id;
@@ -10,7 +10,7 @@ class VideoDB{
   final String _created_at;
   final String _video_url; 
 
-  const VideoDB(this._video_id, this._speaker_id, this._category_id, this._numberOfLikes, this._comment_id, this._created_at, this._video_url);
+  const VideoDB(this._title,this._video_id, this._speaker_id, this._category_id, this._numberOfLikes, this._comment_id, this._created_at, this._video_url);
 
   ///Example of named VideoModel constructor to parse JSON data
 //  VideoModel.fromJSON(Map map):
@@ -19,7 +19,7 @@ class VideoDB{
 //      _videoUrl = map['videoUrl'],
 //      _videoThumbUrl = map['videoThumbUrl'],
 //      _duration = map['duration'];
-
+  String get title => _title;
   String get video_id => _video_id;
   String get speaker_id => _speaker_id;
   String get category_id => _category_id;

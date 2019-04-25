@@ -18,7 +18,7 @@ class CommentsDB{
   String get comment_id => _comment_id;
   String get comment_details => _comment_details;
   String get comment_writer => _comment_writer;
-  String get commend_time => _comment_time;
+  String get comment_time => _comment_time;
   
 
 

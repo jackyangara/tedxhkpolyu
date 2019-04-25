@@ -173,12 +173,30 @@ class TrendingTabState extends State<TrendingTab> {
   ///Mock load data from Backend
   Future<List<VideoModel>> _loadVideos() async {
     //TODO: fetch data firebase
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(Duration(milliseconds: 2000));
 
     final url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
     final imageUrl = 'https://yt3.ggpht.com/a-/AAuE7mAu_-wIFvVO-HT01aQiwmI4GHd_aEXw3HQ-OA=s900-mo-c-c0xffffffff-rj-k-no';
-    return <VideoModel>[
-      VideoModel("Several studies have concluded that Hong Kong is located in Asia", "Jacky Angara", url, imageUrl, 200),
-    ];
+    List<VideoModel> res = [];
+    VideoModel temp;
+    String _title, _author, _videoUrl, _videoThumbUrl;
+    DocumentReference speakerRef;
+    int _duration;
+        Firestore.instance.collection('videos').snapshots().listen((data) =>{
+          data.documents.forEach((doc) => {
+            _title = doc["title"],
+            speakerRef = doc["speaker_id"],
+            _author = speakerRef.documentID.toString(),
+            _videoUrl = doc["video_url"],
+            _videoThumbUrl = imageUrl,
+            _duration = 200,
+            temp = new VideoModel(_title, _author, _videoUrl, _videoThumbUrl, _duration),
+            res.add(temp),
+      })
+    });
+    return res;
+    // return <VideoModel>[
+    //   VideoModel("working", "Jacky Angara", url, imageUrl, 200),
+    // ];
   }
 }
