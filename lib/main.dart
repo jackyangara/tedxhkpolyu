@@ -123,7 +123,7 @@ class RootPageState extends State<RootPage> {
             decoration: InputDecoration(
               icon: Icon(Icons.search),
               border: InputBorder.none,
-              hintText: "Search",
+              hintText: "test",
             ),
           ),
         ),

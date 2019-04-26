@@ -24,5 +24,4 @@ class VideoModel{
   String get videoThumbUrl => _videoThumbUrl;
   int get duration => _duration;
 
-
 }
