@@ -20,6 +20,8 @@ class _SearchPageState extends State<SearchPage> {
         _searchBar()
         ,
         _searchResult()
+        ,
+        
       ],
     );
   }
