@@ -94,25 +94,27 @@ class BlogDetailPage extends StatelessWidget {
   //TODO: Fix the font and positions
   final BlogDB blogDB;
   BlogDetailPage({this.blogDB});
+
+  final TextStyle titleStyle = TextStyle(fontSize: 30.0, fontFamily: 'CharterITC', fontWeight: FontWeight.w500);
+  final TextStyle contentStyle = TextStyle(fontSize: 16.0, fontFamily: 'Kievit');
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: RichText(
-          text: TextSpan(
-            text: blogDB.title, 
-            style: DefaultTextStyle.of(context).style,
-            children: <TextSpan>[
-              TextSpan(text: blogDB.subtitle, style: TextStyle()),
-              TextSpan(text: blogDB.content),
-            ],
-          ),
-        ),
-      ),
+      body: _buildBody()
     );
   }
+
+  Widget _buildBody(){
+    return ListView(
+      padding: EdgeInsets.all(12.0),
+      children: <Widget>[
+        Text(blogDB.title, style: titleStyle,),
+        Text(blogDB.content, style: contentStyle,),
+      ],
+    );
+  }
+
 }

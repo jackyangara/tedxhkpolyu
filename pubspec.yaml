@@ -35,5 +35,10 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  assets:
-    - img/
+  fonts:
+    - family: CharterITC
+      fonts:
+        - asset: fonts/charter-itc-regular.ttf
+    - family: Kievit
+      fonts:
+        - asset: fonts/kievit-regular.ttf
