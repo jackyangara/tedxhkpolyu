@@ -68,21 +68,26 @@ class VideoTile{
       PopupMenuButton(
         icon: Icon(Icons.more_vert, color: Colors.white,),
         itemBuilder: (_) => <PopupMenuEntry<String>>[
-          const PopupMenuItem<String>(
+          PopupMenuItem<String>(
             value: '1',
-            child: Text('Add to My List'),
+            child: GestureDetector(
+              child: Text('Add to My List'),
+              onTap: (){_addToList(url);},
+              
+            ),
           )
-          
+        
         ],
       );
 
-  // _addToList(url) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final key = 'myList';
-  //   List<String> value = prefs.getStringList(key) ?? [url.toString()];
-  //   prefs.setStringList(key, value);
-  //   print(value);
-  // }
+  _addToList(url) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'myList';
+    List<String> value = prefs.getStringList(key) ?? [url.toString()];
+    value.add(url);
+    prefs.setStringList(key, value);
+    print(value.length);
+  }
 
   Text _videoTitle(String title) =>
       Text(title,

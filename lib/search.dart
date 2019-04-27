@@ -15,15 +15,11 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController _textController =TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return 
-      ListView(children: <Widget>[
-        _searchBar()
-        ,
-        _searchResult()
-        ,
+    return _searchResult();
         
-      ],
-    );
+        
+  
+    
   }
   
 
@@ -62,6 +58,7 @@ class _SearchPageState extends State<SearchPage> {
         } else {
           //Process to get videos and blogs
           List<Widget> result = snapshot.data;
+          result.insert(0, _searchBar());
           return Container(
           color: Colors.white,
             child: ListView(
