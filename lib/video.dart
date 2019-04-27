@@ -1,93 +1,181 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:tedxhkpolyu/fade_animation.dart';
-import 'package:video_player/video_player.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tedxhkpolyu/model/video_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+class Video{
 
-class VideoPage extends StatefulWidget {
-  @override
-  VideoPageState createState() {
-    return new VideoPageState();
-  }
-}
+  
 
-class VideoPageState extends State<VideoPage> {
-  VideoPlayerController _controller;
-  bool _isPlaying = false;
+  Future<List<VideoModel>> loadVideos(String query) async {
+    //TODO: ADD IMAGE_URL TO FIRESTORE
 
-  Widget videoStatusAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    videoStatusAnimation = Container();
-
-    _controller = VideoPlayerController.network(
-        'http://techslides.com/demos/sample-videos/small.mp4')
-      ..addListener(() {
-        final bool isPlaying = _controller.value.isPlaying;
-        if (isPlaying != _isPlaying) {
-          setState(() {
-            _isPlaying = isPlaying;
-          });
-        }
+    final imageUrl = 'https://yt3.ggpht.com/a-/AAuE7mAu_-wIFvVO-HT01aQiwmI4GHd_aEXw3HQ-OA=s900-mo-c-c0xffffffff-rj-k-no';
+    List<VideoModel> res = [];
+    int i;
+    VideoModel temp;
+    String _title, _author, _videoUrl, _videoThumbUrl;
+    DocumentReference speakerRef;
+    int _duration;
+        Firestore.instance.collection('videos').snapshots().listen((data) =>{
+          data.documents.forEach((doc) => {
+            _title = doc["title"],
+            speakerRef = doc["speaker_id"],
+            _author = speakerRef.documentID.toString(),
+            _videoUrl = doc["video_url"],
+            _videoThumbUrl = imageUrl,
+            _duration = doc["duration"],
+            temp = new VideoModel(_title, _author, _videoUrl, _videoThumbUrl, _duration),
+            res.add(temp),
       })
-      ..initialize().then((_) {
-        Timer(Duration(milliseconds: 1500), () {
-          if (!mounted) return;
-
-          setState(() {});
-          _controller.play();
-        });
-      });
+    });
+    await Future.delayed(Duration(milliseconds: 2000));
+    if(query==""){
+      return res;
+    }
+    else{
+      List<VideoModel> resQuery = [];
+      for(i = 0; i < res.length; i++){
+        if(
+        res[i].author.contains(query) || 
+        res[i].title.contains(query)
+        ){
+          resQuery.add(res[i]);
+        }
+      }
+      return resQuery;
+    }
+    
   }
+  Widget videoTile(VideoModel videoModel){
+    var durationMin = (videoModel.duration / 60).round();
+    var durationSec = videoModel.duration % 60;
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+    return Padding(
+      ///Think of this padding as spacing between items
+      padding: const EdgeInsets.all(4.0),
+      child: GestureDetector(
+        onTap: () => _openVideoUrl(videoModel.videoUrl),
 
-  @override
-  Widget build(BuildContext context) => AspectRatio(
-        aspectRatio: 16/9,
-        child: _controller.value.initialized
-            ? videoPlayer()
-            : CircularProgressIndicator(),
-      );
+        ///Text widgets on top of Image
+        child: Stack(
+          ///Position ListTile to bottom of Stack
+          alignment: AlignmentDirectional.bottomCenter,
+          children: <Widget>[
 
-  Widget videoPlayer() => Stack(
-        children: <Widget>[
-          video(),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: VideoProgressIndicator(
-              _controller,
-              allowScrubbing: true,
-              padding: EdgeInsets.all(16.0),
+            Image.network(videoModel.videoThumbUrl,
+              width: double.infinity,
+              height: 200.0,
+              fit: BoxFit.fitWidth,
             ),
-          ),
-          Center(child: videoStatusAnimation),
+
+            ///ListTile containing Text Widgets
+            ListTile(
+              contentPadding: EdgeInsets.only(bottom: 5.0, left: 8.0),
+              title: _videoAuthor(videoModel.author),
+              subtitle: _videoTitle(videoModel.title),
+
+              ///Trailing is the space at the end of ListTile
+              trailing: Column(
+                children: <Widget>[
+                  _overflowButton(videoModel.videoUrl),
+                  _videoDuration('$durationMin:$durationSec'),
+                ],
+              ),
+            )
+
+
+
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  ///Package url_launcher
+  ///https://github.com/flutter/plugins/tree/master/packages/url_launcher
+  ///
+  ///Troubleshooting
+  ///If you encountered MissingPluginException: https://github.com/flutter/flutter/issues/10967
+  void _openVideoUrl(String url) async {
+    if (await canLaunch(url)) {
+    await launch(url);
+    } else {
+    throw 'Could not launch $url';
+    }
+  }
+
+  Widget _overflowButton(url) =>
+      PopupMenuButton(
+        icon: Icon(Icons.more_vert, color: Colors.white,),
+        itemBuilder: (_) => <PopupMenuEntry<String>>[
+          PopupMenuItem<String>(
+            value: '1',
+            child: GestureDetector(
+              child: Text('Add to My List'),
+              onTap: (){_addToList(url);},
+              
+            ),
+          )
+        
         ],
       );
 
-  Widget video() => GestureDetector(
-        child: VideoPlayer(_controller),
-        onTap: () {
-          if (!_controller.value.initialized) {
-            return;
-          }
-          if (_controller.value.isPlaying) {
-            videoStatusAnimation =
-                FadeAnimation(child: const Icon(Icons.pause, size: 100.0));
-            _controller.pause();
-          } else {
-            videoStatusAnimation =
-                FadeAnimation(child: const Icon(Icons.play_arrow, size: 100.0));
-            _controller.play();
-          }
-        },
+  _addToList(url) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'myList';
+    List<String> value = prefs.getStringList(key) ?? [url.toString()];
+    value.add(url);
+    prefs.setStringList(key, value);
+    print(value.length);
+  }
+
+  Text _videoTitle(String title) =>
+      Text(title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+          fontSize: 15.0,
+          color: Colors.white,
+          fontWeight: FontWeight.bold)
       );
+
+  Text _videoAuthor(String author) =>
+      Text(author,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+              fontSize: 13.0,
+              color: Colors.white)
+      );
+
+  Text _videoDuration(String duration) =>
+      Text(duration,
+          style: TextStyle(
+              fontSize: 13.0,
+              color: Colors.white,
+              fontWeight: FontWeight.w300)
+      );
+  Future<List<Widget>> createVideoWidget(String query) async {
+    List<VideoModel> result = await loadVideos(query);
+    await Future.delayed(Duration(milliseconds: 50));
+    List<Widget> listTiles = [];
+    ListTile temp;
+    VideoModel currentVideo;
+    int i;
+    for(i = 0; i < result.length; ++i){
+      currentVideo = result[i];
+      temp = new ListTile(
+        leading: Icon(Icons.video_library),
+        title:Text(result[i].title, overflow: TextOverflow.ellipsis, maxLines: 1,), 
+        subtitle: Text(result[i].author),
+        onTap: () => _openVideoUrl(currentVideo.videoUrl),
+      );
+      listTiles.add(temp);
+      listTiles.add(Divider());
+    }
+    return listTiles;
+  }
 }

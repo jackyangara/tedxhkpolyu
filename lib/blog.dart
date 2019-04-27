@@ -37,7 +37,7 @@ class BlogPageState extends State<BlogPage> {
   Future<List<Widget>> createBlogsWidget(String query) async {
     
     List<BlogDB> result = await loadBlogs(query);
-    await Future.delayed(Duration(milliseconds: 2000));
+    await Future.delayed(Duration(milliseconds: 50));
     List<Widget> listTiles = [];
     ListTile temp;
     BlogDB currentBlog;
@@ -68,6 +68,7 @@ class BlogPageState extends State<BlogPage> {
     
     List<BlogDB> res = [];
     BlogDB temp;
+    int i;
     String blog_id, title, subtitle, content;
     DocumentReference speaker_id, category_id;
     int numberOfLikes;
@@ -90,7 +91,27 @@ class BlogPageState extends State<BlogPage> {
       })
     });
     await Future.delayed(Duration(milliseconds: 2000));
-    return res.isEmpty?Container():res;
+    // return res.isEmpty?Container():res;
+    if(query==""){
+      return res;
+    }
+    else{
+      List<BlogDB> resQuery = [];
+      for(i = 0; i < res.length; i++){
+        if(
+        res[i].subtitle.contains(query) || 
+        res[i].title.contains(query) ||
+        res[i].content.contains(query) ||
+        res[i].category_id.documentID.toString().contains(query) ||
+        res[i].speaker_id.documentID.toString().contains(query)
+        ){
+          resQuery.add(res[i]);
+        }
+      }
+      print("This is: "+query);
+      return resQuery;
+    }
+    
   }
 }
 

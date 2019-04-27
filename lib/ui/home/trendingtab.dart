@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'package:tedxhkpolyu/video.dart';
+import 'package:tedxhkpolyu/videoplayer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:tedxhkpolyu/model/video_model.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tedxhkpolyu/videotile.dart';
+
+import 'package:tedxhkpolyu/video.dart';
 
 class TrendingTab extends StatefulWidget {
   static const double padding = 8.0;
@@ -44,10 +43,9 @@ class TrendingTabState extends State<TrendingTab> {
     ///
     ///Kalo mau animasi lebi keren https://pub.dartlang.org/packages/shimmer
     
-    VideoTile videoTile = new VideoTile();
-    
+    Video video = new Video();
     return FutureBuilder(
-      future: _loadVideos(),
+      future: video.loadVideos(""),
       builder: (_, snapshot) {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
@@ -61,7 +59,7 @@ class TrendingTabState extends State<TrendingTab> {
             padding: const EdgeInsets.all(TrendingTab.padding),
             itemBuilder: (_, index) {
               var videoModel = videos[index];
-              return videoTile.videoTile(videoModel);
+              return video.videoTile(videoModel);
             },
           );
         }
@@ -69,31 +67,5 @@ class TrendingTabState extends State<TrendingTab> {
     );
   }
 
-  ///Mock load data from Backend
-  Future<List<VideoModel>> _loadVideos() async {
-    //TODO: fetch data firebase
-
-    final url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-    final imageUrl = 'https://yt3.ggpht.com/a-/AAuE7mAu_-wIFvVO-HT01aQiwmI4GHd_aEXw3HQ-OA=s900-mo-c-c0xffffffff-rj-k-no';
-    List<VideoModel> res = [];
-    VideoModel temp;
-    String _title, _author, _videoUrl, _videoThumbUrl;
-    DocumentReference speakerRef;
-    int _duration;
-        Firestore.instance.collection('videos').snapshots().listen((data) =>{
-          data.documents.forEach((doc) => {
-            _title = doc["title"],
-            speakerRef = doc["speaker_id"],
-            _author = speakerRef.documentID.toString(),
-            _videoUrl = doc["video_url"],
-            _videoThumbUrl = imageUrl,
-            _duration = doc["duration"],
-            temp = new VideoModel(_title, _author, _videoUrl, _videoThumbUrl, _duration),
-            res.add(temp),
-      })
-    });
-    await Future.delayed(Duration(milliseconds: 2000));
-
-    return res;
-  }
+  
 }

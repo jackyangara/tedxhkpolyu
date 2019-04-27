@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tedxhkpolyu/model/blog_db.dart';
-import 'package:tedxhkpolyu/model/video_model.dart';
 import 'package:tedxhkpolyu/blog.dart';
+import 'package:tedxhkpolyu/video.dart';
+
 class SearchPage extends StatefulWidget {
   @override
   _SearchPageState createState(){
@@ -12,46 +11,44 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   BlogPageState blogPageState = new BlogPageState();
-  final TextEditingController _textController =TextEditingController();
+  Video video = new Video();
+  final TextEditingController _textController = TextEditingController();
+  //TODO: Make the search work. Cannot update tree.
+  @override
+  void initState() {
+    super.initState();
+    FutureBuilder searchResult;
+    _textController.addListener((){
+      setState(() {
+        searchResult = _searchResult(_textController.text);
+        return searchResult;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the Widget is removed from the Widget tree
+    _textController.dispose();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return _searchResult();
-        
-        
-  
-    
+    //TODO: Finish the searching of result for video and blog
+    return _searchResult("");
   }
   
-
-  Future<List<VideoModel>> _loadVideos() async {
-    //TODO: fetch data firebase
-    
- 
-    final url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-    final imageUrl = 'https://yt3.ggpht.com/a-/AAuE7mAu_-wIFvVO-HT01aQiwmI4GHd_aEXw3HQ-OA=s900-mo-c-c0xffffffff-rj-k-no';
-    List<VideoModel> res = [];
-    VideoModel temp;
-    String _title, _author, _videoUrl, _videoThumbUrl;
-    DocumentReference speakerRef;
-    int _duration;
-        Firestore.instance.collection('videos').snapshots().listen((data) =>{
-          data.documents.forEach((doc) => {
-            _title = doc["title"],
-            speakerRef = doc["speaker_id"],
-            _author = speakerRef.documentID.toString(),
-            _videoUrl = doc["video_url"],
-            _videoThumbUrl = imageUrl,
-            _duration = doc["duration"],
-            temp = new VideoModel(_title, _author, _videoUrl, _videoThumbUrl, _duration),
-            res.add(temp),
-      })
-    });
-    await Future.delayed(Duration(milliseconds: 2000));
-    return res;
+  Future<List<Widget>> _loadResult(String query) async {
+    List<Widget> blogTiles = await blogPageState.createBlogsWidget(query);
+    List<Widget> videoTiles = await video.createVideoWidget(query);
+    List<Widget> allTiles = new List.from(blogTiles)..addAll(videoTiles);
+    return allTiles;
   }
-  FutureBuilder _searchResult(){
+  
+  FutureBuilder _searchResult(String query){
     return FutureBuilder(
-      future: blogPageState.createBlogsWidget("Data Analytics"),
+      future: _loadResult(query),
       builder: (_,snapshot){
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
@@ -101,7 +98,7 @@ class _SearchPageState extends State<SearchPage> {
             decoration: InputDecoration(
               icon: Icon(Icons.search),
               border: InputBorder.none,
-              hintText: "test",
+              hintText: "Search",
             ),
           ),
         ),
