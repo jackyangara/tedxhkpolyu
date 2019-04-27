@@ -72,7 +72,6 @@ class TrendingTabState extends State<TrendingTab> {
   ///Mock load data from Backend
   Future<List<VideoModel>> _loadVideos() async {
     //TODO: fetch data firebase
-    await Future.delayed(Duration(milliseconds: 2000));
 
     final url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
     final imageUrl = 'https://yt3.ggpht.com/a-/AAuE7mAu_-wIFvVO-HT01aQiwmI4GHd_aEXw3HQ-OA=s900-mo-c-c0xffffffff-rj-k-no';
@@ -93,6 +92,8 @@ class TrendingTabState extends State<TrendingTab> {
             res.add(temp),
       })
     });
+    await Future.delayed(Duration(milliseconds: 2000));
+
     return res;
   }
 }

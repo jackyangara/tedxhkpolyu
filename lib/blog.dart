@@ -66,7 +66,7 @@ class BlogPageState extends State<BlogPage> {
   }
 
   Future<List<BlogDB>> loadBlogs(String query) async {
-    await Future.delayed(Duration(milliseconds: 2000));
+    
     List<BlogDB> res = [];
     BlogDB temp;
     String blog_id, title, subtitle, content;
@@ -90,7 +90,8 @@ class BlogPageState extends State<BlogPage> {
         res.add(temp),
       })
     });
-    return res;
+    await Future.delayed(Duration(milliseconds: 2000));
+    return res.isEmpty?Container():res;
   }
 }
 

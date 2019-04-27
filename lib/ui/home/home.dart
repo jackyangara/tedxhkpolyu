@@ -7,13 +7,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: TabBarView(
-
-        children: <Widget>[
-          TrendingTab(),
-          NewestTab()
-        ],
-      ),
-    );
+      child: TrendingTab()
+      );
   }
 }

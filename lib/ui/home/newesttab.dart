@@ -50,7 +50,6 @@ class NewestTab extends StatelessWidget {
   //TODO: put in last 6 hours ago uploaded
   ///Mock load data from Backend
   Future<List<VideoModel>> _loadVideos() async {
-    await Future.delayed(Duration(milliseconds: 1000));
     // String readTimestamp(int timestamp) {
     //   var now = new DateTime.now();
     //   var format = new DateFormat('HH:mm a');
@@ -96,6 +95,8 @@ class NewestTab extends StatelessWidget {
             res.add(temp),
       })
     });
+    await Future.delayed(Duration(milliseconds: 2000));
+
     return res;
   }
 

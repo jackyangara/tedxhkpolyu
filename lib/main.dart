@@ -106,19 +106,7 @@ class RootPageState extends State<RootPage> {
   PreferredSizeWidget _selectBottom(int index) {
     switch (index) {
       case 0:
-        return TabBar(
-          indicatorColor: Colors.redAccent,
-          unselectedLabelColor: Colors.grey,
-          labelStyle: TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.w600
-          ),
-          labelColor: Colors.red,
-          tabs: <Widget>[
-            Tab(text: "Trending",),
-            Tab(text: "Newest",),
-          ],
-        );
+        return null;
       case 1:
         return null;
       case 2:
