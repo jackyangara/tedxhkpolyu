@@ -1,3 +1,4 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tedxhkpolyu/model/blog_db.dart';
@@ -44,9 +45,7 @@ class _BlogPageState extends State<BlogPage> {
             listTiles.add(Divider());
           }
           return Container(
-          color: Colors.white,
             child: ListView(
-              
               padding: const EdgeInsets.symmetric(
                 horizontal:7.0,
               ),
@@ -100,8 +99,10 @@ class BlogDetailPage extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    Color iconColor = DynamicTheme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black;
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: iconColor),
       ),
       body: _buildBody()
     );

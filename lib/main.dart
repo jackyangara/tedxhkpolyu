@@ -3,21 +3,44 @@ import 'package:tedxhkpolyu/myted.dart';
 import 'package:tedxhkpolyu/search.dart';
 import 'package:tedxhkpolyu/ui/home/home.dart';
 import 'package:tedxhkpolyu/blog.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return MaterialApp(
-      theme: ThemeData(
-        primaryColor: Colors.white ,
-      ),
-      debugShowCheckedModeBanner: false,
-      title: "TEDxHKPolyU",
-      home: RootPage()
+    return DynamicTheme(
+      defaultBrightness: Brightness.light,
+      data: (brightness) => _buildThemeData(brightness),
+      themedWidgetBuilder: (_, theme){
+        return MaterialApp(
+        theme: theme,
+        debugShowCheckedModeBanner: false,
+        title: "TEDxHKPolyU",
+        home: RootPage()
+      );}
     );
+  }
+
+  ThemeData _buildThemeData(Brightness brightness){
+    return brightness == Brightness.dark
+
+        ? ThemeData.dark().copyWith(
+        textTheme: ThemeData.dark().textTheme.apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
+        ),
+        backgroundColor: Colors.black)
+
+
+        : ThemeData.light().copyWith(
+        primaryColor: Colors.white,
+        textTheme: ThemeData.light().textTheme.apply(
+          bodyColor: Colors.black,
+          displayColor: Colors.black,
+        ),
+        backgroundColor: Colors.white);
   }
 }
 
@@ -31,6 +54,13 @@ class RootPage extends StatefulWidget {
 class RootPageState extends State<RootPage> {
   final TextEditingController _textController =TextEditingController();
   int _currentIndex = 0;
+  bool _nightMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _nightMode = DynamicTheme.of(context).brightness == Brightness.dark;
+  }
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -46,6 +76,11 @@ class RootPageState extends State<RootPage> {
       ),
     );
   }
+
+  Color determineColor(){
+    return DynamicTheme.of(context).brightness == Brightness.dark ? Theme.of(context).primaryColor : Theme.of(context).backgroundColor ;
+  }
+
 
   void onTapped(int index){
     setState(() {
@@ -132,17 +167,20 @@ class RootPageState extends State<RootPage> {
   }
 
   _bottomNavBar() {
-    return Theme(
 
-      data: Theme.of(context).copyWith(
-        // sets the background color of the `BottomNavigationBar`
-          canvasColor: Colors.white,
-          // sets the active color of the `BottomNavigationBar` if `Brightness` is light
-          primaryColor: Colors.black,
-          textTheme: Theme
-              .of(context)
-              .textTheme
-              .copyWith(caption: new TextStyle(color: Colors.grey))),
+    var brightness = DynamicTheme.of(context).brightness;
+    var themeData = brightness == Brightness.dark ? ThemeData.dark() : ThemeData.light().copyWith(
+        canvasColor: Colors.white,
+        // sets the active color of the `BottomNavigationBar` if `Brightness` is light
+        primaryColor: Colors.black,
+        textTheme: Theme
+            .of(context)
+            .textTheme
+            .copyWith(caption: new TextStyle(color: Colors.grey))
+    );
+
+    return Theme(
+      data: themeData,
       child: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: [
@@ -158,14 +196,53 @@ class RootPageState extends State<RootPage> {
   }
 
   List<Widget> _actions() {
-    return <Widget>[
-      IconButton(
-        icon: Icon(
-            Icons.more_vert
+    var brightness = DynamicTheme.of(context).brightness;
+
+    var popupMenu = PopupMenuButton<Options>(
+      icon: Icon(
+        Icons.more_vert,
+        color: brightness == Brightness.dark ? Colors.white : Colors.black,
+      ),
+      onSelected: null,
+      itemBuilder: (_) => <PopupMenuEntry<Options>>[
+        PopupMenuItem<Options>(
+          value: Options.NIGHT_MODE,
+          child: Row(
+            children: <Widget>[
+              Text('Night Mode'),
+              Flexible(
+                child: Switch(
+                  onChanged: (nightMode) => changeBrightness(nightMode),
+                  value: _nightMode,
+                ),
+              )
+            ],
+          ),
         ),
-        onPressed: null,
-      )
+        const PopupMenuItem<Options>(
+          value: Options.ABOUT_US,
+          child: Text("About Us"),
+        )
+      ],
+    );
+
+    return <Widget>[
+      popupMenu,
     ];
   }
+
+
+  void changeBrightness(bool nightMode){
+      DynamicTheme.of(context).setBrightness(nightMode ? Brightness.dark : Brightness.light);
+      setState(() {
+        _nightMode = nightMode;
+      });
+  }
 }
+
+enum Options {
+  NIGHT_MODE,
+  ABOUT_US
+}
+
 
