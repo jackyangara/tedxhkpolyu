@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
 
 class BlogDB{
 
@@ -30,6 +32,5 @@ class BlogDB{
   int get numberOfLikes => _numberOfLikes;
   List<dynamic> get comment_id => _comment_id;
   Timestamp get created_at => _created_at;
-
 
 }

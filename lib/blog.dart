@@ -6,45 +6,23 @@ import 'package:tedxhkpolyu/model/blog_db.dart';
 class BlogPage extends StatefulWidget {
   //TODO: index- title subtitle 
   @override
-  _BlogPageState createState(){
-    return new _BlogPageState();
+  BlogPageState createState(){
+    return new BlogPageState();
   }
 }
 
-class _BlogPageState extends State<BlogPage> {
+class BlogPageState extends State<BlogPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _loadBlogs(),
+      future: createBlogsWidget(""),
       builder: (_,snapshot){
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         } else {
-          final List<BlogDB> result = snapshot.data;
-          List<Widget> listTiles = [];
-          ListTile temp;
-          BlogDB currentBlog;
-          int i;
-          for(i = 0; i < result.length; ++i){
-            currentBlog = result[i];
-            temp = new ListTile(
-              leading: Icon(Icons.bookmark),
-              title:Text(result[i].title, overflow: TextOverflow.ellipsis, maxLines: 1,), 
-              subtitle: Text(result[i].subtitle),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BlogDetailPage(
-                    blogDB: currentBlog,
-                  )),
-                );
-              },
-              
-            );
-            listTiles.add(temp);
-            listTiles.add(Divider());
-          }
+          final List<Widget> listTiles = snapshot.data;
           return Container(
+          color: Colors.white,
             child: ListView(
               padding: const EdgeInsets.symmetric(
                 horizontal:7.0,
@@ -57,11 +35,38 @@ class _BlogPageState extends State<BlogPage> {
     );
   }
 
-  Future<List<BlogDB>> _loadBlogs() async {
-
+  Future<List<Widget>> createBlogsWidget(String query) async {
     
+    List<BlogDB> result = await loadBlogs(query);
     await Future.delayed(Duration(milliseconds: 2000));
+    List<Widget> listTiles = [];
+    ListTile temp;
+    BlogDB currentBlog;
+    int i;
+    for(i = 0; i < result.length; ++i){
+      currentBlog = result[i];
+      temp = new ListTile(
+        leading: Icon(Icons.bookmark),
+        title:Text(result[i].title, overflow: TextOverflow.ellipsis, maxLines: 1,), 
+        subtitle: Text(result[i].subtitle),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BlogDetailPage(
+              blogDB: currentBlog,
+            )),
+          );
+        },
+      );
+      listTiles.add(temp);
+      listTiles.add(Divider());
+    }
+    
+    return listTiles;
+  }
 
+  Future<List<BlogDB>> loadBlogs(String query) async {
+    await Future.delayed(Duration(milliseconds: 2000));
     List<BlogDB> res = [];
     BlogDB temp;
     String blog_id, title, subtitle, content;
@@ -69,7 +74,8 @@ class _BlogPageState extends State<BlogPage> {
     int numberOfLikes;
     List<dynamic> comment_id;
     Timestamp created_at;
-    Firestore.instance.collection("blogs").snapshots().listen((data) =>{
+    Firestore.instance.collection("blogs")
+    .snapshots().listen((data) =>{
       data.documents.forEach((doc) => {
         blog_id = doc.documentID.toString(),
         title = doc["title"],
@@ -84,7 +90,6 @@ class _BlogPageState extends State<BlogPage> {
         res.add(temp),
       })
     });
-
     return res;
   }
 }
