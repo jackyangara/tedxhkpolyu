@@ -16,31 +16,12 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return 
-    ListView(children: <Widget>[
-      _searchBar()
-      ,
-      FutureBuilder(
-      future: blogPageState.createBlogsWidget("Data Analytics"),
-      builder: (_,snapshot){
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        } else {
-          //Process to get videos and blogs
-          List<Widget> result = snapshot.data;
-          return Container(
-          color: Colors.white,
-            child: ListView(
-              padding: const EdgeInsets.symmetric(
-                horizontal:7.0,
-              ),
-              children: result,
-            ),
-          );
-        }
-      }
-    )
-    ],);
-    
+      ListView(children: <Widget>[
+        _searchBar()
+        ,
+        _searchResult()
+      ],
+    );
   }
   
 
@@ -70,7 +51,28 @@ class _SearchPageState extends State<SearchPage> {
     await Future.delayed(Duration(milliseconds: 2000));
     return res;
   }
-
+  FutureBuilder _searchResult(){
+    return FutureBuilder(
+      future: blogPageState.createBlogsWidget("Data Analytics"),
+      builder: (_,snapshot){
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          //Process to get videos and blogs
+          List<Widget> result = snapshot.data;
+          return Container(
+          color: Colors.white,
+            child: ListView(
+              padding: const EdgeInsets.symmetric(
+                horizontal:7.0,
+              ),
+              children: result,
+            ),
+          );
+        }
+      }
+    );
+  }
   PreferredSize _searchBar(){
 
     return PreferredSize(

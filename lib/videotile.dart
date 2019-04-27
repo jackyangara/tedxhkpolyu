@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tedxhkpolyu/model/video_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -35,7 +36,7 @@ class VideoTile{
               ///Trailing is the space at the end of ListTile
               trailing: Column(
                 children: <Widget>[
-                  _overflowButton(),
+                  _overflowButton(videoModel.videoUrl),
                   _videoDuration('$durationMin:$durationSec'),
                 ],
               ),
@@ -63,20 +64,25 @@ class VideoTile{
     }
   }
 
-  Widget _overflowButton() =>
+  Widget _overflowButton(url) =>
       PopupMenuButton(
         icon: Icon(Icons.more_vert, color: Colors.white,),
         itemBuilder: (_) => <PopupMenuEntry<String>>[
           const PopupMenuItem<String>(
             value: '1',
-            child: Text('Option 1'),
-          ),
-          const PopupMenuItem<String>(
-            value: '2',
-            child: Text('Option 2',),
+            child: Text('Add to My List'),
           )
+          
         ],
       );
+
+  // _addToList(url) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final key = 'myList';
+  //   List<String> value = prefs.getStringList(key) ?? [url.toString()];
+  //   prefs.setStringList(key, value);
+  //   print(value);
+  // }
 
   Text _videoTitle(String title) =>
       Text(title,

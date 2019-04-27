@@ -22,7 +22,6 @@ class BlogPageState extends State<BlogPage> {
         } else {
           final List<Widget> listTiles = snapshot.data;
           return Container(
-          color: Colors.white,
             child: ListView(
               padding: const EdgeInsets.symmetric(
                 horizontal:7.0,
@@ -101,7 +100,7 @@ class BlogDetailPage extends StatelessWidget {
   BlogDetailPage({this.blogDB});
 
   final TextStyle titleStyle = TextStyle(fontSize: 30.0, fontFamily: 'CharterITC', fontWeight: FontWeight.w500);
-  final TextStyle contentStyle = TextStyle(fontSize: 16.0, fontFamily: 'Kievit');
+  final TextStyle contentStyle = TextStyle(fontSize: 16.0, fontFamily: 'Kievit', height: 1.5);
   
   @override
   Widget build(BuildContext context) {
@@ -119,6 +118,7 @@ class BlogDetailPage extends StatelessWidget {
       padding: EdgeInsets.all(12.0),
       children: <Widget>[
         Text(blogDB.title, style: titleStyle,),
+        Text('\n', style: TextStyle(fontSize: 8.0),),
         Text(blogDB.content, style: contentStyle,),
       ],
     );
