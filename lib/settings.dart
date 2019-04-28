@@ -29,7 +29,7 @@ class _SettingsPageState extends State<SettingsPage> {
     Color iconColor = DynamicTheme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text('Settings', style: TextStyle(color: iconColor)),
         iconTheme: IconThemeData(color: iconColor),
       ),
       body: _buildBody()
