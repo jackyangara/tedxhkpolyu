@@ -1,6 +1,7 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tedxhkpolyu/model/blog_db.dart';
 
 class BlogPage extends StatefulWidget {
@@ -15,7 +16,7 @@ class BlogPageState extends State<BlogPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: createBlogsWidget(""),
+      future: createBlogsWidget(context, ""),
       builder: (_,snapshot){
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
@@ -34,7 +35,7 @@ class BlogPageState extends State<BlogPage> {
     );
   }
 
-  Future<List<Widget>> createBlogsWidget(String query) async {
+  Future<List<Widget>> createBlogsWidget(context, String query) async {
     
     List<BlogDB> result = await loadBlogs(query);
     await Future.delayed(Duration(milliseconds: 50));
@@ -56,12 +57,61 @@ class BlogPageState extends State<BlogPage> {
             )),
           );
         },
+        trailing: Column(
+          children: <Widget>[
+            _overflowButton(context, result[i].title),
+          ]
+        )
       );
       listTiles.add(temp);
       listTiles.add(Divider());
     }
     
     return listTiles;
+  }
+  Widget _overflowButton(context, title) =>
+    PopupMenuButton(
+      icon: Icon(Icons.more_vert),
+      itemBuilder: (_) => <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          value: '1',
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            child: Text('Add to My List'),
+            onTap: (){_addToList(context, title);_showDialog(context); _closeDialog(context);},
+            
+          ),
+        )
+      
+      ],
+    );
+
+  void _closeDialog(context) async{
+    await new Future.delayed(const Duration(milliseconds: 750));
+    Navigator.of(context).pop();
+  }
+  void _showDialog(contextP) async {
+    
+    // flutter defined function
+    showDialog(
+      context: contextP,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Center(child:Text("Added to My List"), heightFactor: 2.0, widthFactor: 0.6,),
+          content: new Center(child:Icon(Icons.receipt),heightFactor: 2.0,widthFactor: 0.6),
+        );
+        // return object of type Dialog
+          
+      },
+    );
+  }
+  _addToList(context, title) async {
+    Navigator.of(context).pop();
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'myList';
+    List<String> value = prefs.getStringList(key) ?? [];
+    value.add(title);
+    prefs.setStringList(key, value);
   }
 
   Future<List<BlogDB>> loadBlogs(String query) async {
