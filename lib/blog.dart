@@ -78,7 +78,7 @@ class BlogPageState extends State<BlogPage> {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             child: Text('Add to My List'),
-            onTap: (){_addToList(context, title);_showDialog(context); _closeDialog(context);},
+            onTap: (){_addToList(context, title);}
             
           ),
         )
@@ -90,14 +90,14 @@ class BlogPageState extends State<BlogPage> {
     await new Future.delayed(const Duration(milliseconds: 750));
     Navigator.of(context).pop();
   }
-  void _showDialog(contextP) async {
+  void _showDialog(contextP,text) async {
     
     // flutter defined function
     showDialog(
       context: contextP,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Center(child:Text("Added to My List"), heightFactor: 2.0, widthFactor: 0.6,),
+          title: new Center(child:Text(text), heightFactor: 2.0, widthFactor: 0.6,),
           content: new Center(child:Icon(Icons.receipt),heightFactor: 2.0,widthFactor: 0.6),
         );
         // return object of type Dialog
@@ -110,7 +110,18 @@ class BlogPageState extends State<BlogPage> {
     final prefs = await SharedPreferences.getInstance();
     final key = 'myList';
     List<String> value = prefs.getStringList(key) ?? [];
-    value.add(title);
+    if(value.isEmpty){
+      _showDialog(context, 'Added to Your List'); _closeDialog(context);
+      value.add(title);
+    }
+    else if(value.contains(title))
+    {
+      _showDialog(context, 'Item Exists'); _closeDialog(context);
+    }
+    else{
+      _showDialog(context, 'Added to Your List'); _closeDialog(context);
+      value.add(title);
+    }
     prefs.setStringList(key, value);
   }
 

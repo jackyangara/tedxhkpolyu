@@ -68,7 +68,7 @@ class RootPageState extends State<RootPage> {
       length: 2,
           child: Scaffold(
         appBar: AppBar(
-          title: Image.asset("img/logo.png",height: 25.0,),
+          title: DynamicTheme.of(context).brightness == Brightness.dark?Image.asset("img/logo2.png",height: 25.0,):Image.asset("img/logo.png",height: 25.0,),
           actions: _actions(),
           bottom: _selectBottom(_currentIndex),
         ),

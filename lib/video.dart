@@ -58,7 +58,7 @@ class Video{
       ///Think of this padding as spacing between items
       padding: const EdgeInsets.all(4.0),
       child: GestureDetector(
-        onTap: () => _openVideoUrl(videoModel.videoUrl),
+        onTap: () => _openVideoUrl(context, videoModel.videoUrl),
 
         ///Text widgets on top of Image
         child: Stack(
@@ -101,17 +101,28 @@ class Video{
   ///
   ///Troubleshooting
   ///If you encountered MissingPluginException: https://github.com/flutter/flutter/issues/10967
-  void _openVideoUrl(String url) async {
+  void _openVideoUrl(context, String url) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'history';
     List<String> value = prefs.getStringList(key) ?? [];
-    //TODO: history remove duplicate
-    value.add(url);
+    if(value.isEmpty){
+      value.add(url);
+    }
+    else if(value.contains(url))
+    {
+      if(value[0] != url){
+        value.remove(url);
+        value.insert(0, url);
+      }
+    }
+    else{
+      value.add(url);
+    }
     prefs.setStringList(key, value);
     if (await canLaunch(url)) {
-    await launch(url);
+      await launch(url);
     } else {
-    throw 'Could not launch $url';
+      throw 'Could not launch $url';
     }
   }
 
@@ -124,7 +135,7 @@ class Video{
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               child: Text('Add to My List'),
-              onTap: (){_addToList(context, url);_showDialog(context); _closeDialog(context);
+              onTap: (){_addToList(context, url);
         },
               
             ),
@@ -137,14 +148,14 @@ class Video{
     await new Future.delayed(const Duration(milliseconds: 750));
     Navigator.of(context).pop();
   }
-  void _showDialog(contextP) async {
+  void _showDialog(contextP,text) async {
     
     // flutter defined function
     showDialog(
       context: contextP,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Center(child:Text("Added to My List"), heightFactor: 2.0, widthFactor: 0.6,),
+          title: new Center(child:Text(text), heightFactor: 2.0, widthFactor: 0.6,),
           content: new Center(child:Icon(Icons.receipt),heightFactor: 2.0,widthFactor: 0.6),
         );
         // return object of type Dialog
@@ -157,7 +168,18 @@ class Video{
     final prefs = await SharedPreferences.getInstance();
     final key = 'myList';
     List<String> value = prefs.getStringList(key) ?? [];
-    value.add(url);
+    if(value.isEmpty){
+      _showDialog(context, 'Added to Your List'); _closeDialog(context);
+      value.add(url);
+    }
+    else if(value.contains(url))
+    {
+      _showDialog(context, 'Item Exists'); _closeDialog(context);
+    }
+    else{
+      _showDialog(context, 'Added to Your List'); _closeDialog(context);
+      value.add(url);
+    }
     prefs.setStringList(key, value);
   }
 
@@ -187,7 +209,7 @@ class Video{
               color: Colors.white,
               fontWeight: FontWeight.w300)
       );
-  Future<List<Widget>> createVideoWidget(String query) async {
+  Future<List<Widget>> createVideoWidget(context, String query) async {
     List<VideoModel> result = await loadVideos(query);
     await Future.delayed(Duration(milliseconds: 50));
     List<Widget> listTiles = [];
@@ -200,7 +222,7 @@ class Video{
         leading: Icon(Icons.video_library),
         title:Text(result[i].title, overflow: TextOverflow.ellipsis, maxLines: 1,), 
         subtitle: Text(result[i].author),
-        onTap: () => _openVideoUrl(currentVideo.videoUrl),
+        onTap: () => _openVideoUrl(context, currentVideo.videoUrl),
       );
       listTiles.add(temp);
       listTiles.add(Divider());
