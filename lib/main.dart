@@ -69,10 +69,62 @@ class RootPageState extends State<RootPage> {
           child: Scaffold(
         appBar: AppBar(
           title: Image.asset("img/logo.png",height: 25.0,),
-          actions: _actions()
+          actions: _actions(),
+          bottom: _selectBottom(_currentIndex),
         ),
         body: _selectWidget(_currentIndex),
         bottomNavigationBar: _bottomNavBar()
+      ),
+    );
+  }
+
+  PreferredSizeWidget _selectBottom(int index) {
+    switch (index) {
+      case 0:
+        return null;
+      case 1:
+        return null;
+      case 2:
+        return _searchBar();
+      case 2:
+        return null;
+      default:
+        return null;
+    }
+  }
+
+  PreferredSize _searchBar(){
+    return PreferredSize(
+      preferredSize: Size.fromHeight(60.0),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Container(
+          margin: EdgeInsets.only(
+            left: 10.0,
+            right: 10.0,
+            bottom: 5.0,),
+          decoration: BoxDecoration(
+            
+            border: Border(
+              top: BorderSide(width: 0.5, color: Color(0xFFFF888888)),
+              left: BorderSide(width: 0.5, color: Color(0xFFFF888888)),
+              right: BorderSide(width: 0.5, color: Color(0xFFFF888888)),
+              bottom: BorderSide(width: 0.5, color: Color(0xFFFF888888)),
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(10.0))
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal:7.0,
+          ),
+          child: TextField(
+            controller: _textController,
+            decoration: InputDecoration(
+              icon: Icon(Icons.search),
+              border: InputBorder.none,
+              hintText: "Search",
+            ),
+          ),
+        ),
       ),
     );
   }
