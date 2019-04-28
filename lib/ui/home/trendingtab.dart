@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'package:tedxhkpolyu/videoplayer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:tedxhkpolyu/model/video_model.dart';
