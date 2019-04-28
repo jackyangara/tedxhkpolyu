@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tedxhkpolyu/myted.dart';
 import 'package:tedxhkpolyu/search.dart';
+import 'package:tedxhkpolyu/settings.dart';
 import 'package:tedxhkpolyu/ui/home/home.dart';
 import 'package:tedxhkpolyu/blog.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -147,17 +148,16 @@ class RootPageState extends State<RootPage> {
       itemBuilder: (_) => <PopupMenuEntry<Options>>[
         PopupMenuItem<Options>(
           value: Options.NIGHT_MODE,
-          child: Row(
-            children: <Widget>[
-              Text('Night Mode'),
-              Flexible(
-                child: Switch(
-                  onChanged: (nightMode) => changeBrightness(nightMode),
-                  value: _nightMode,
-                ),
-              )
-            ],
-          ),
+          child: GestureDetector(
+            child: Text('Settings'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage(
+                )),
+              );
+            },
+          )
         ),
         const PopupMenuItem<Options>(
           value: Options.ABOUT_US,
@@ -178,6 +178,8 @@ class RootPageState extends State<RootPage> {
         _nightMode = nightMode;
       });
   }
+
+
 }
 
 enum Options {

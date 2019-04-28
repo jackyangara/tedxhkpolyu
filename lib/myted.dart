@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -14,15 +15,16 @@ class MyTedPage extends StatefulWidget {
 
 class MyTedPageState extends State<MyTedPage> {
   bool _boolLoading = true;
-  int _likes = 0;
-  int _history = 0;
-  int _myList = 0;
+  List<String> _history = [];
+  List<String> _myList = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _loadAPI();
+    
   }
+
 
   @override
   Widget build(BuildContext context) {  
@@ -30,9 +32,8 @@ class MyTedPageState extends State<MyTedPage> {
       alignment: Alignment.center,
           child: _boolLoading?CircularProgressIndicator():ListView(
         children: <Widget>[
-          _createTile(Icon(Icons.view_list), "My List", _myList),
-          _createTile(Icon(Icons.favorite), "Likes", _likes),
-          _createTile(Icon(Icons.access_time), "History", _history)
+          _createTile(Icon(Icons.view_list), "My List", _myList.length),
+          _createTile(Icon(Icons.access_time), "History", _history.length)
         ],
       ),
     );
@@ -49,10 +50,10 @@ class MyTedPageState extends State<MyTedPage> {
   void _loadAPI() async {
     await Future.delayed(Duration(milliseconds: 500));
     // call API/database disini
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _likes = 3;
-      _history = 1;
-      _myList = 20;
+      _history = prefs.getStringList('history') ?? [];
+      _myList = prefs.getStringList('myList') ?? [];
       _boolLoading = false;
     });
   }

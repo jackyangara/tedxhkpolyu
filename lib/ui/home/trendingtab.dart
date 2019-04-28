@@ -59,7 +59,7 @@ class TrendingTabState extends State<TrendingTab> {
             padding: const EdgeInsets.all(TrendingTab.padding),
             itemBuilder: (_, index) {
               var videoModel = videos[index];
-              return video.videoTile(videoModel);
+              return video.videoTile(context, videoModel);
             },
           );
         }

@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Video{
 
+
   
 
   Future<List<VideoModel>> loadVideos(String query) async {
@@ -14,6 +15,7 @@ class Video{
     final imageUrl = 'https://yt3.ggpht.com/a-/AAuE7mAu_-wIFvVO-HT01aQiwmI4GHd_aEXw3HQ-OA=s900-mo-c-c0xffffffff-rj-k-no';
     List<VideoModel> res = [];
     int i;
+    
     VideoModel temp;
     String _title, _author, _videoUrl, _videoThumbUrl;
     DocumentReference speakerRef;
@@ -48,10 +50,10 @@ class Video{
     }
     
   }
-  Widget videoTile(VideoModel videoModel){
+  Widget videoTile(context, VideoModel videoModel){
     var durationMin = (videoModel.duration / 60).round();
     var durationSec = videoModel.duration % 60;
-
+    
     return Padding(
       ///Think of this padding as spacing between items
       padding: const EdgeInsets.all(4.0),
@@ -79,7 +81,7 @@ class Video{
               ///Trailing is the space at the end of ListTile
               trailing: Column(
                 children: <Widget>[
-                  _overflowButton(videoModel.videoUrl),
+                  _overflowButton(context, videoModel.videoUrl),
                   _videoDuration('$durationMin:$durationSec'),
                 ],
               ),
@@ -100,6 +102,12 @@ class Video{
   ///Troubleshooting
   ///If you encountered MissingPluginException: https://github.com/flutter/flutter/issues/10967
   void _openVideoUrl(String url) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'history';
+    List<String> value = prefs.getStringList(key) ?? [];
+    //TODO: history remove duplicate
+    value.add(url);
+    prefs.setStringList(key, value);
     if (await canLaunch(url)) {
     await launch(url);
     } else {
@@ -107,15 +115,17 @@ class Video{
     }
   }
 
-  Widget _overflowButton(url) =>
+  Widget _overflowButton(context, url) =>
       PopupMenuButton(
         icon: Icon(Icons.more_vert, color: Colors.white,),
         itemBuilder: (_) => <PopupMenuEntry<String>>[
           PopupMenuItem<String>(
             value: '1',
             child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
               child: Text('Add to My List'),
-              onTap: (){_addToList(url);},
+              onTap: (){_addToList(context, url);_showDialog(context); _closeDialog(context);
+        },
               
             ),
           )
@@ -123,13 +133,32 @@ class Video{
         ],
       );
 
-  _addToList(url) async {
+  void _closeDialog(context) async{
+    await new Future.delayed(const Duration(milliseconds: 750));
+    Navigator.of(context).pop();
+  }
+  void _showDialog(contextP) async {
+    
+    // flutter defined function
+    showDialog(
+      context: contextP,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Center(child:Text("Added to My List"), heightFactor: 2.0, widthFactor: 0.6,),
+          content: new Center(child:Icon(Icons.receipt),heightFactor: 2.0,widthFactor: 0.6),
+        );
+        // return object of type Dialog
+          
+      },
+    );
+  }
+  _addToList(context, url) async {
+    Navigator.of(context).pop();
     final prefs = await SharedPreferences.getInstance();
     final key = 'myList';
-    List<String> value = prefs.getStringList(key) ?? [url.toString()];
+    List<String> value = prefs.getStringList(key) ?? [];
     value.add(url);
     prefs.setStringList(key, value);
-    print(value.length);
   }
 
   Text _videoTitle(String title) =>
