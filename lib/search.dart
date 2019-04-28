@@ -40,7 +40,7 @@ class _SearchPageState extends State<SearchPage> {
   }
   
   Future<List<Widget>> _loadResult(String query) async {
-    List<Widget> blogTiles = await blogPageState.createBlogsWidget(query);
+    List<Widget> blogTiles = await blogPageState.createBlogsWidget(context, query);
     List<Widget> videoTiles = await video.createVideoWidget(query);
     List<Widget> allTiles = new List.from(blogTiles)..addAll(videoTiles);
     return allTiles;
@@ -57,7 +57,6 @@ class _SearchPageState extends State<SearchPage> {
           List<Widget> result = snapshot.data;
           result.insert(0, _searchBar());
           return Container(
-          color: Colors.white,
             child: ListView(
               padding: const EdgeInsets.symmetric(
                 horizontal:7.0,
