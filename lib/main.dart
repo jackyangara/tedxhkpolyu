@@ -61,7 +61,15 @@ class RootPageState extends State<RootPage> {
   void initState() {
     super.initState();
     _nightMode = DynamicTheme.of(context).brightness == Brightness.dark;
+
+    _textController.addListener((){
+      setState(() {
+        
+      });
+    });
   }
+
+  
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -147,7 +155,7 @@ class RootPageState extends State<RootPage> {
       case 1:
         return BlogPage();
       case 2:
-        return SearchPage();
+        return SearchPage(_textController.text);
       case 3:
         return MyTedPage();
       default:
