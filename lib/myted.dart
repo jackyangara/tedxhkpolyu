@@ -32,20 +32,35 @@ class MyTedPageState extends State<MyTedPage> {
       alignment: Alignment.center,
           child: _boolLoading?CircularProgressIndicator():ListView(
         children: <Widget>[
-          _createTile(Icon(Icons.view_list), "My List", _myList.length),
-          _createTile(Icon(Icons.access_time), "History", _history.length)
+          ListTile(
+            title: Text("My List"),
+            subtitle: Text(_myList.length.toString()),
+            leading: Icon(Icons.view_list),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyListPage(
+                )),
+              );
+            },
+          ),
+          ListTile(
+            title: Text("History"),
+            subtitle: Text(_history.length.toString()),
+            leading: Icon(Icons.access_time),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HistoryPage(
+                )),
+              );
+            },
+          ),
         ],
       ),
     );
   }
 
-  Widget _createTile(Icon icon, String title, int subtitle){
-    return ListTile(
-      title: Text(title),
-      subtitle: Text(subtitle.toString()),
-      leading: icon,
-    );
-  }
 
   void _loadAPI() async {
     await Future.delayed(Duration(milliseconds: 500));
@@ -57,4 +72,43 @@ class MyTedPageState extends State<MyTedPage> {
       _boolLoading = false;
     });
   }
+}
+
+class MyListPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    Future<List<String>> hist = _getMyList();
+    hist.then((val) {
+      print(val);
+    });
+    return Container(child: Text(hist.toString()),);
+  }
+  Future<List<String>> _getMyList() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'myList';
+    List<String> value = prefs.getStringList(key) ?? [];
+    return value;
+  }
+}
+
+class HistoryPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    Future<List<String>> hist = _getHistory();
+    hist.then((val) {
+      print(val);
+    });
+    return Container(child: Text('a'),);
+  }
+
+  Future<List<String>> _getHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'history';
+    List<String> value = prefs.getStringList(key) ?? [];
+    return value;
+  }
+
+  
 }
