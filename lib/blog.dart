@@ -23,7 +23,14 @@ class BlogPageState extends State<BlogPage> {
         } else {
           final List<Widget> listTiles = snapshot.data;
           return Container(
-            child: ListView(
+            child: ListView.separated(
+              itemBuilder: (_, index){
+                BlogDB currentDB = result[index];
+                //Assign values to ListTile
+              }
+              separatorBuilder:(_,index){
+                return Divider();
+              }
               padding: const EdgeInsets.symmetric(
                 horizontal:7.0,
               ),
@@ -41,15 +48,16 @@ class BlogPageState extends State<BlogPage> {
     await Future.delayed(Duration(milliseconds: 50));
     List<Widget> listTiles = [];
     ListTile temp;
-    BlogDB currentBlog;
     int i;
     for(i = 0; i < result.length; ++i){
-      currentBlog = result[i];
+      final BlogDB currentBlog = result[i];
       temp = new ListTile(
+        key: Key(currentBlog.blog_id),
         leading: Icon(Icons.bookmark),
-        title:Text(result[i].title, overflow: TextOverflow.ellipsis, maxLines: 1,), 
-        subtitle: Text(result[i].subtitle),
+        title:Text(currentBlog.title, overflow: TextOverflow.ellipsis, maxLines: 1,), 
+        subtitle: Text(currentBlog.subtitle),
         onTap: () {
+          _addToHistory(this);
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => BlogDetailPage(
@@ -59,7 +67,7 @@ class BlogPageState extends State<BlogPage> {
         },
         trailing: Column(
           children: <Widget>[
-            _overflowButton(context, result[i].title),
+            _overflowButton(context, currentBlog.blog_id),
           ]
         )
       );
@@ -68,6 +76,27 @@ class BlogPageState extends State<BlogPage> {
     }
     
     return listTiles;
+  }
+
+  _addToHistory(data) async{
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'history';
+    List<String> value = prefs.getStringList(key) ?? [];
+    if(value.isEmpty){
+      value.add(data);
+    }
+    else if(value.contains(data))
+    {
+      if(value[0] != data){
+        value.remove(data);
+        value.insert(0, data);
+      }
+    }
+    else{
+      value.add(data);
+    }
+    prefs.setStringList(key, value);
+    return;
   }
   Widget _overflowButton(context, title) =>
     PopupMenuButton(

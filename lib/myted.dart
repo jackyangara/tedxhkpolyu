@@ -95,8 +95,6 @@ class MyListPage extends StatelessWidget{
             List<Widget> listTiles = [];
             ListTile temp;
             _currentList = []..addAll(snapshot.data);
-            print(_currentList);
-            print(_currentList);
             for(int i = 0; i < _currentList.length; i++){
               temp = new ListTile(
                 leading: Icon(Icons.bookmark),
@@ -105,7 +103,6 @@ class MyListPage extends StatelessWidget{
               listTiles.add(temp);
               listTiles.add(Divider());
             }
-            print(listTiles.toString());
             return Container(
               alignment: Alignment.center,
               child:ListView(
@@ -143,8 +140,6 @@ class HistoryPage extends StatelessWidget{
             List<Widget> listTiles = [];
             ListTile temp;
             _currentList = []..addAll(snapshot.data);
-            print(_currentList);
-            print(_currentList);
             for(int i = 0; i < _currentList.length; i++){
               temp = new ListTile(
                 leading: Icon(Icons.bookmark),
@@ -153,7 +148,6 @@ class HistoryPage extends StatelessWidget{
               listTiles.add(temp);
               listTiles.add(Divider());
             }
-            print(listTiles.toString());
             return Container(
               alignment: Alignment.center,
               child:ListView(
