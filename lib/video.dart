@@ -12,9 +12,8 @@ class Video{
   Future<List<VideoModel>> loadVideos(String query) async {
     //TODO: ADD IMAGE_URL TO FIRESTORE
 
-    final imageUrl = 'https://yt3.ggpht.com/a-/AAuE7mAu_-wIFvVO-HT01aQiwmI4GHd_aEXw3HQ-OA=s900-mo-c-c0xffffffff-rj-k-no';
     List<VideoModel> res = [];
-    int i;
+    int i, _numberOfLikes;
     
     VideoModel temp;
     String _title, _author, _videoUrl, _videoThumbUrl, _category;
@@ -27,11 +26,12 @@ class Video{
             speakerRef = doc["speaker_id"],
             _author = speakerRef.documentID.toString(),
             _videoUrl = doc["video_url"],
-            _videoThumbUrl = imageUrl,
+            _videoThumbUrl = doc["thumbnail_url"],
             _duration = doc["duration"],
             categoryRef = doc["category_id"],
             _category = categoryRef.documentID.toString(),
-            temp = new VideoModel(_title, _author, _videoUrl, _videoThumbUrl, _duration, _category),
+            _numberOfLikes = doc["numberOfLikes"],
+            temp = new VideoModel(_title, _author, _videoUrl, _videoThumbUrl, _duration, _category,_numberOfLikes),
             res.add(temp),
       })
     });
