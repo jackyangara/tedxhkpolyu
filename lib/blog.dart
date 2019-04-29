@@ -16,25 +16,49 @@ class BlogPageState extends State<BlogPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: createBlogsWidget(context, ""),
+      future: loadBlogs(""),
       builder: (_,snapshot){
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         } else {
-          final List<Widget> listTiles = snapshot.data;
-          return Container(
-            child: ListView.separated(
-              itemBuilder: (_, index){
-                BlogDB currentDB = result[index];
-                //Assign values to ListTile
-              }
-              separatorBuilder:(_,index){
-                return Divider();
-              }
-              padding: const EdgeInsets.symmetric(
-                horizontal:7.0,
-              ),
-              children: listTiles,
+
+          //Obtain blogs loaded from loadBlogs
+          final List<BlogDB> blogDBs = snapshot.data;
+
+          //Create a ListView with separator,
+          //With length equal to number of blogs
+          //And returns a ListTile for each blog (see itemBuilder)
+          return ListView.separated(
+            itemCount: blogDBs.length,
+
+            itemBuilder: (_, index){
+              final BlogDB blog = blogDBs[index];
+              return ListTile(
+                  leading: Icon(Icons.bookmark),
+                  title:Text(blog.title, overflow: TextOverflow.ellipsis, maxLines: 1,),
+                  subtitle: Text(blog.subtitle),
+                  onTap: () {
+                    _addToHistory(blog.blog_id);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => BlogDetailPage(
+                        blogDB: blog,
+                      )),
+                    );
+                  },
+
+                  trailing: Column(
+                      children: <Widget>[
+                        _overflowButton(context, blog.blog_id),
+                      ]
+                  )
+              );
+            },
+            separatorBuilder:(_,index){
+              return Divider();
+            },
+            padding: const EdgeInsets.symmetric(
+              horizontal:7.0,
             ),
           );
         }
@@ -43,7 +67,7 @@ class BlogPageState extends State<BlogPage> {
   }
 
   Future<List<Widget>> createBlogsWidget(context, String query) async {
-    
+
     List<BlogDB> result = await loadBlogs(query);
     await Future.delayed(Duration(milliseconds: 50));
     List<Widget> listTiles = [];
@@ -54,10 +78,10 @@ class BlogPageState extends State<BlogPage> {
       temp = new ListTile(
         key: Key(currentBlog.blog_id),
         leading: Icon(Icons.bookmark),
-        title:Text(currentBlog.title, overflow: TextOverflow.ellipsis, maxLines: 1,), 
+        title:Text(currentBlog.title, overflow: TextOverflow.ellipsis, maxLines: 1,),
         subtitle: Text(currentBlog.subtitle),
         onTap: () {
-          _addToHistory(this);
+          _addToHistory(currentBlog.blog_id);
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => BlogDetailPage(
@@ -74,26 +98,26 @@ class BlogPageState extends State<BlogPage> {
       listTiles.add(temp);
       listTiles.add(Divider());
     }
-    
+
     return listTiles;
   }
 
-  _addToHistory(data) async{
+  _addToHistory(String blogId) async{
     final prefs = await SharedPreferences.getInstance();
     final key = 'history';
     List<String> value = prefs.getStringList(key) ?? [];
     if(value.isEmpty){
-      value.add(data);
+      value.add(blogId);
     }
-    else if(value.contains(data))
+    else if(value.contains(blogId))
     {
-      if(value[0] != data){
-        value.remove(data);
-        value.insert(0, data);
+      if(value[0] != blogId){
+        value.remove(blogId);
+        value.insert(0, blogId);
       }
     }
     else{
-      value.add(data);
+      value.add(blogId);
     }
     prefs.setStringList(key, value);
     return;
