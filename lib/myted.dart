@@ -1,6 +1,7 @@
 
 import 'dart:async';
 
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -44,6 +45,8 @@ class MyTedPageState extends State<MyTedPage> {
               );
             },
           ),
+          Divider()
+          ,
           ListTile(
             title: Text("History"),
             subtitle: Text(_history.length.toString()),
@@ -78,11 +81,41 @@ class MyListPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    Future<List<String>> hist = _getMyList();
-    hist.then((val) {
-      print(val);
-    });
-    return Container(child: Text(hist.toString()),);
+    Color iconColor = DynamicTheme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black;
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: iconColor),
+      ),
+      body:FutureBuilder(
+      future: _getMyList(),
+      builder: (_, snapshot){
+        if (!snapshot.hasData) return Container();
+        else {
+            List<String> _currentList = [];
+            List<Widget> listTiles = [];
+            ListTile temp;
+            _currentList = []..addAll(snapshot.data);
+            print(_currentList);
+            print(_currentList);
+            for(int i = 0; i < _currentList.length; i++){
+              temp = new ListTile(
+                leading: Icon(Icons.bookmark),
+                title:Text(_currentList[i], overflow: TextOverflow.ellipsis, maxLines: 1,),
+              );
+              listTiles.add(temp);
+              listTiles.add(Divider());
+            }
+            print(listTiles.toString());
+            return Container(
+              alignment: Alignment.center,
+              child:ListView(
+                padding: const EdgeInsets.symmetric(horizontal:7.0,),
+                children: listTiles
+              )
+            );
+
+        }
+      }));
   }
   Future<List<String>> _getMyList() async {
     final prefs = await SharedPreferences.getInstance();
@@ -96,11 +129,41 @@ class HistoryPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    Future<List<String>> hist = _getHistory();
-    hist.then((val) {
-      print(val);
-    });
-    return Container(child: Text('a'),);
+    Color iconColor = DynamicTheme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black;
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: iconColor),
+      ),
+      body:FutureBuilder(
+      future: _getHistory(),
+      builder: (_, snapshot){
+        if (!snapshot.hasData) return Container();
+        else {
+            List<String> _currentList = [];
+            List<Widget> listTiles = [];
+            ListTile temp;
+            _currentList = []..addAll(snapshot.data);
+            print(_currentList);
+            print(_currentList);
+            for(int i = 0; i < _currentList.length; i++){
+              temp = new ListTile(
+                leading: Icon(Icons.bookmark),
+                title:Text(_currentList[i], overflow: TextOverflow.ellipsis, maxLines: 1,),
+              );
+              listTiles.add(temp);
+              listTiles.add(Divider());
+            }
+            print(listTiles.toString());
+            return Container(
+              alignment: Alignment.center,
+              child:ListView(
+                padding: const EdgeInsets.symmetric(horizontal:7.0,),
+                children: listTiles
+              )
+            );
+
+        }
+      }));
   }
 
   Future<List<String>> _getHistory() async {
