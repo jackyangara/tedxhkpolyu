@@ -17,8 +17,9 @@ class Video{
     int i;
     
     VideoModel temp;
-    String _title, _author, _videoUrl, _videoThumbUrl;
+    String _title, _author, _videoUrl, _videoThumbUrl, _category;
     DocumentReference speakerRef;
+    DocumentReference categoryRef;
     int _duration;
         Firestore.instance.collection('videos').snapshots().listen((data) =>{
           data.documents.forEach((doc) => {
@@ -28,7 +29,9 @@ class Video{
             _videoUrl = doc["video_url"],
             _videoThumbUrl = imageUrl,
             _duration = doc["duration"],
-            temp = new VideoModel(_title, _author, _videoUrl, _videoThumbUrl, _duration),
+            categoryRef = doc["category_id"],
+            _category = categoryRef.documentID.toString(),
+            temp = new VideoModel(_title, _author, _videoUrl, _videoThumbUrl, _duration, _category),
             res.add(temp),
       })
     });
@@ -41,7 +44,8 @@ class Video{
       for(i = 0; i < res.length; i++){
         if(
         res[i].author.contains(query) || 
-        res[i].title.contains(query)
+        res[i].title.contains(query) ||
+        res[i].category.contains(query)
         ){
           resQuery.add(res[i]);
         }

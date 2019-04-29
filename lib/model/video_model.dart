@@ -7,8 +7,9 @@ class VideoModel{
   final String _videoUrl;
   final String _videoThumbUrl;
   final int _duration; ///in seconds
+  final String _category;
 
-  const VideoModel(this._title, this._author, this._videoUrl, this._videoThumbUrl,this._duration);
+  const VideoModel(this._title, this._author, this._videoUrl, this._videoThumbUrl,this._duration,this._category);
 
   ///Example of named VideoModel constructor to parse JSON data
 //  VideoModel.fromJSON(Map map):
@@ -23,5 +24,6 @@ class VideoModel{
   String get videoUrl => _videoUrl;
   String get videoThumbUrl => _videoThumbUrl;
   int get duration => _duration;
+  String get category => _category;
 
 }

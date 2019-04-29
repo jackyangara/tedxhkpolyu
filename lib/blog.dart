@@ -23,14 +23,7 @@ class BlogPageState extends State<BlogPage> {
         } else {
           final List<Widget> listTiles = snapshot.data;
           return Container(
-            child: ListView.separated(
-              itemBuilder: (_, index){
-                BlogDB currentDB = result[index];
-                //Assign values to ListTile
-              }
-              separatorBuilder:(_,index){
-                return Divider();
-              }
+            child: ListView(
               padding: const EdgeInsets.symmetric(
                 horizontal:7.0,
               ),
@@ -198,7 +191,6 @@ class BlogPageState extends State<BlogPage> {
           resQuery.add(res[i]);
         }
       }
-      print("This is: "+query);
       return resQuery;
     }
     

@@ -8,7 +8,12 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return DynamicTheme(
@@ -56,7 +61,7 @@ class RootPageState extends State<RootPage> {
   final TextEditingController _textController =TextEditingController();
   int _currentIndex = 0;
   bool _nightMode;
-
+  String query = "";
   @override
   void initState() {
     super.initState();
@@ -64,11 +69,18 @@ class RootPageState extends State<RootPage> {
 
     _textController.addListener((){
       setState(() {
-        
+        query = _textController.text;
       });
     });
+    
   }
 
+  @override
+  void dispose() {
+    // Clean up the controller when the Widget is removed from the Widget tree
+    _textController.dispose();
+    super.dispose();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -81,7 +93,8 @@ class RootPageState extends State<RootPage> {
           bottom: _selectBottom(_currentIndex),
         ),
         body: _selectWidget(_currentIndex),
-        bottomNavigationBar: _bottomNavBar()
+        bottomNavigationBar: _bottomNavBar(),
+        
       ),
     );
   }
@@ -155,7 +168,7 @@ class RootPageState extends State<RootPage> {
       case 1:
         return BlogPage();
       case 2:
-        return SearchPage(_textController.text);
+        return SearchPage(query);
       case 3:
         return MyTedPage();
       default:

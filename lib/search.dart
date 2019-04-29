@@ -4,23 +4,21 @@ import 'package:tedxhkpolyu/video.dart';
 
 class SearchPage extends StatefulWidget {
   final String query;
-  const SearchPage(this.query);
-
+  SearchPage(this.query);
+  int _i = 1;
+  int get i => _i;
   @override
   _SearchPageState createState(){
-    return new _SearchPageState(query);
+    return new _SearchPageState();
   } 
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final String query;
-
-  _SearchPageState(this.query);
   
   @override
   Widget build(BuildContext context) {
     //TODO: Finish the searching of result for video and blog
-    return _searchResult(this.query);
+    return _searchResult(widget.query);
   }
   
   Future<List<Widget>> _loadResult(String query) async {
@@ -33,14 +31,19 @@ class _SearchPageState extends State<SearchPage> {
   }
   
   FutureBuilder _searchResult(String query){
+    List<Widget> result;
+    ConnectionState connectionState;
     return FutureBuilder(
       future: _loadResult(query),
       builder: (_,snapshot){
-        if (!snapshot.hasData) {
+        connectionState = snapshot.connectionState;
+        if (connectionState.index == 1) {
           return Center(child: CircularProgressIndicator());
-        } else {
+        }
+        else if(connectionState.index == 3)
+        {
           //Process to get videos and blogs
-          List<Widget> result = snapshot.data;
+          result = snapshot.data;
           return Container(
             child: ListView(
               padding: const EdgeInsets.symmetric(
