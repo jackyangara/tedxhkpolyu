@@ -45,7 +45,8 @@ class Video{
         if(
         res[i].author.contains(query) || 
         res[i].title.contains(query) ||
-        res[i].category.contains(query)
+        res[i].category.contains(query) ||
+        res[i].videoUrl.contains(query)
         ){
           resQuery.add(res[i]);
         }
@@ -132,7 +133,7 @@ class Video{
 
   Widget _overflowButton(context, url) =>
       PopupMenuButton(
-        icon: Icon(Icons.more_vert, color: Colors.white,),
+        icon: Icon(Icons.more_vert, color: Colors.grey,),
         itemBuilder: (_) => <PopupMenuEntry<String>>[
           PopupMenuItem<String>(
             value: '1',
@@ -226,6 +227,11 @@ class Video{
         leading: Icon(Icons.video_library),
         title:Text(result[i].title, overflow: TextOverflow.ellipsis, maxLines: 1,), 
         subtitle: Text(result[i].author),
+        trailing: Column(
+          children: <Widget>[
+            _overflowButton(context, currentVideo.videoUrl),
+          ]
+        ),
         onTap: () => _openVideoUrl(context, currentVideo.videoUrl),
       );
       listTiles.add(temp);
@@ -233,4 +239,5 @@ class Video{
     }
     return listTiles;
   }
+  
 }

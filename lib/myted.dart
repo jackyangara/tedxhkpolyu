@@ -4,6 +4,8 @@ import 'dart:async';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tedxhkpolyu/blog.dart';
+import 'package:tedxhkpolyu/video.dart';
 
 
 
@@ -84,24 +86,20 @@ class MyListPage extends StatelessWidget{
     Color iconColor = DynamicTheme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black;
     return Scaffold(
       appBar: AppBar(
+        title: Text('My List', style: TextStyle(color: iconColor),),
         iconTheme: IconThemeData(color: iconColor),
       ),
       body:FutureBuilder(
-      future: _getMyList(),
+      future: _getMyList(context),
       builder: (_, snapshot){
-        if (!snapshot.hasData) return Container();
+        if (!snapshot.hasData) return Center(child:CircularProgressIndicator());
         else {
-            List<String> _currentList = [];
+            
+            List<Widget> _currentList = [];
             List<Widget> listTiles = [];
-            ListTile temp;
             _currentList = []..addAll(snapshot.data);
             for(int i = 0; i < _currentList.length; i++){
-              temp = new ListTile(
-                leading: Icon(Icons.bookmark),
-                title:Text(_currentList[i], overflow: TextOverflow.ellipsis, maxLines: 1,),
-              );
-              listTiles.add(temp);
-              listTiles.add(Divider());
+              listTiles.add(_currentList[i]);
             }
             return Container(
               alignment: Alignment.center,
@@ -114,11 +112,26 @@ class MyListPage extends StatelessWidget{
         }
       }));
   }
-  Future<List<String>> _getMyList() async {
+  Future<List<Widget>> _getMyList(context) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'myList';
+    List<Widget> listTiles = [];
     List<String> value = prefs.getStringList(key) ?? [];
-    return value;
+    for(int i = 0; i < value.length; i++){
+      List<Widget> x = await _loadResult(context, value[i]);
+      listTiles.add(x[0]);
+      listTiles.add(Divider());
+    }
+    return listTiles;
+  }
+
+  Future<List<Widget>> _loadResult(context, String query) async {
+    BlogPageState blogPageState = new BlogPageState();
+    Video video = new Video();
+    List<Widget> blogTiles = await blogPageState.createBlogsWidget(context, query);
+    List<Widget> videoTiles = await video.createVideoWidget(context, query);
+    List<Widget> allTiles = new List.from(blogTiles)..addAll(videoTiles);
+    return allTiles;
   }
 }
 
@@ -129,24 +142,21 @@ class HistoryPage extends StatelessWidget{
     Color iconColor = DynamicTheme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black;
     return Scaffold(
       appBar: AppBar(
+        title: Text('History', style: TextStyle(color: iconColor),),
         iconTheme: IconThemeData(color: iconColor),
       ),
       body:FutureBuilder(
-      future: _getHistory(),
+      future: _getHistory(context),
       builder: (_, snapshot){
-        if (!snapshot.hasData) return Container();
+        if (!snapshot.hasData) return Center(child:CircularProgressIndicator());
         else {
-            List<String> _currentList = [];
+            
+            List<Widget> _currentList = [];
             List<Widget> listTiles = [];
             ListTile temp;
             _currentList = []..addAll(snapshot.data);
             for(int i = 0; i < _currentList.length; i++){
-              temp = new ListTile(
-                leading: Icon(Icons.bookmark),
-                title:Text(_currentList[i], overflow: TextOverflow.ellipsis, maxLines: 1,),
-              );
-              listTiles.add(temp);
-              listTiles.add(Divider());
+              listTiles.add(_currentList[i]);
             }
             return Container(
               alignment: Alignment.center,
@@ -160,12 +170,25 @@ class HistoryPage extends StatelessWidget{
       }));
   }
 
-  Future<List<String>> _getHistory() async {
+  Future<List<Widget>> _getHistory(context) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'history';
+    List<Widget> listTiles = [];
     List<String> value = prefs.getStringList(key) ?? [];
-    return value;
+    for(int i = 0; i < value.length; i++){
+      List<Widget> x = await _loadResult(context, value[i]);
+      listTiles.add(x[0]);
+      listTiles.add(Divider());
+    }
+    return listTiles;
   }
 
-  
+  Future<List<Widget>> _loadResult(context, String query) async {
+    BlogPageState blogPageState = new BlogPageState();
+    Video video = new Video();
+    List<Widget> blogTiles = await blogPageState.createBlogsWidget(context, query);
+    List<Widget> videoTiles = await video.createVideoWidget(context, query);
+    List<Widget> allTiles = new List.from(blogTiles)..addAll(videoTiles);
+    return allTiles;
+  }
 }
