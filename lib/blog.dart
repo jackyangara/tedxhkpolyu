@@ -36,7 +36,7 @@ class BlogPageState extends State<BlogPage> {
               return ListTile(
                   leading: Icon(Icons.bookmark),
                   title:Text(blog.title, overflow: TextOverflow.ellipsis, maxLines: 1,),
-                  subtitle: Text(blog.subtitle),
+                  subtitle: Text(blog.subtitle, overflow: TextOverflow.ellipsis, maxLines: 1,),
                   onTap: () {
                     _addToHistory(blog.blog_id);
                     Navigator.push(
@@ -79,7 +79,7 @@ class BlogPageState extends State<BlogPage> {
         key: Key(currentBlog.blog_id),
         leading: Icon(Icons.bookmark),
         title:Text(currentBlog.title, overflow: TextOverflow.ellipsis, maxLines: 1,),
-        subtitle: Text(currentBlog.subtitle),
+        subtitle: Text(currentBlog.subtitle, overflow: TextOverflow.ellipsis, maxLines: 1,),
         onTap: () {
           _addToHistory(currentBlog.blog_id);
           Navigator.push(
